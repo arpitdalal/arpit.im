@@ -44,6 +44,10 @@ app.get("/twitter", (_, res) => {
   res.redirect(URLS.twitter);
 });
 
+app.get("/email", (_, res) => {
+  res.redirect(URLS.mail);
+});
+
 app.get("/healthcheck", (_, res) => {
   res.send("OK");
 });
