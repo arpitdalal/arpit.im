@@ -11,28 +11,28 @@ const URLS = {
 };
 
 app.get("/", (_, res) => {
-  res.redirect(301, URLS.website);
+  res.redirect(URLS.website);
 });
 
 app.get("/b", (_, res) => {
-  res.redirect(301, URLS.blog);
+  res.redirect(URLS.blog);
 });
 app.get("/blog", (_, res) => {
-  res.redirect(301, URLS.blog);
+  res.redirect(URLS.blog);
 });
 
 app.get("/gh", (_, res) => {
-  res.redirect(301, URLS.github);
+  res.redirect(URLS.github);
 });
 app.get("/github", (_, res) => {
-  res.redirect(301, URLS.github);
+  res.redirect(URLS.github);
 });
 
 app.get("/in", (_, res) => {
-  res.redirect(301, URLS.linkedin);
+  res.redirect(URLS.linkedin);
 });
 app.get("/linkedin", (_, res) => {
-  res.redirect(301, URLS.linkedin);
+  res.redirect(URLS.linkedin);
 });
 
 app.listen(port, () => {
