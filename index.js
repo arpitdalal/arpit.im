@@ -8,6 +8,8 @@ const URLS = {
   blog: "https://blog.arpitdalal.dev",
   github: "https://github.com/arpitdalal",
   linkedin: "https://linkedin.com/in/arpitdalal",
+  twitter: "https://twitter.com/arpitdalal_dev",
+  mail: "mailto:arpitdalalm@gmail.com",
 };
 
 app.get("/", (_, res) => {
@@ -33,6 +35,13 @@ app.get("/in", (_, res) => {
 });
 app.get("/linkedin", (_, res) => {
   res.redirect(URLS.linkedin);
+});
+
+app.get("/x", (_, res) => {
+  res.redirect(URLS.twitter);
+});
+app.get("/twitter", (_, res) => {
+  res.redirect(URLS.twitter);
 });
 
 app.get("/healthcheck", (_, res) => {
