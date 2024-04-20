@@ -1,0 +1,24 @@
+{
+  "name": "arpit.im",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "author": {
+    "name": "Arpit Dalal",
+    "email": "arpitdalalm@gmail.com",
+    "url": "https://arpitdalal.dev"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.5",
+    "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": "20"
+  }
+}
