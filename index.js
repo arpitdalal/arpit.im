@@ -35,6 +35,10 @@ app.get("/linkedin", (_, res) => {
   res.redirect(URLS.linkedin);
 });
 
+app.get("/healthcheck", (_, res) => {
+  res.send("OK");
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
