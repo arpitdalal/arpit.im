@@ -2,6 +2,7 @@
   "name": "arpit.im",
   "private": true,
   "sideEffects": false,
+  "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js"
@@ -12,6 +13,8 @@
     "url": "https://arpitdalal.dev"
   },
   "dependencies": {
+    "@sentry/node": "^7.111.0",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2"
   },
   "devDependencies": {
