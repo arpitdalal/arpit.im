@@ -41,16 +41,18 @@ app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
 
 app.use((req, _, next) => {
-  posthogClient.capture({
-    distinctId: req.ip,
-    event: "pageview",
-    properties: {
-      path: req.path,
-      url: req.originalUrl,
-      method: req.method,
-      headers: req.headers,
-    },
-  });
+  if (req.url !== "/healthcheck") {
+    posthogClient.capture({
+      distinctId: req.ip,
+      event: "pageview",
+      properties: {
+        path: req.path,
+        url: req.originalUrl,
+        method: req.method,
+        headers: req.headers,
+      },
+    });
+  }
 
   next();
 });
