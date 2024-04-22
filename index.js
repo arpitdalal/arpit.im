@@ -66,32 +66,45 @@ const URLS = {
   mail: "mailto:arpitdalalm@gmail.com",
 };
 
+function blogHandler(req, res, pathToRemove) {
+  res.redirect(prepareUrl(req, pathToRemove, URLS.blog));
+}
+function githubHandler(req, res, pathToRemove) {
+  res.redirect(prepareUrlWithPath(req, pathToRemove, URLS.github));
+}
+function linkedinHandler(res) {
+  res.redirect(URLS.linkedin);
+}
+function twitterHandler(res) {
+  res.redirect(URLS.twitter);
+}
+
 app.get("/b/:path(*)?", (req, res) => {
-  res.redirect(prepareUrlWithPathAndQueryParams(req, URLS.blog));
+  blogHandler(req, res, "/b");
 });
 app.get("/blog/:path(*)?", (req, res) => {
-  res.redirect(prepareUrlWithPathAndQueryParams(req, URLS.blog));
+  blogHandler(req, res, "/blog");
 });
 
 app.get("/gh/:path(*)?", (req, res) => {
-  res.redirect(prepareUrlWithPathAndQueryParams(req, URLS.github));
+  githubHandler(req, res, "/gh");
 });
 app.get("/github/:path(*)?", (req, res) => {
-  res.redirect(prepareUrlWithPathAndQueryParams(req, URLS.github));
+  githubHandler(req, res, "/github");
 });
 
 app.get("/in/:path(*)?", (_, res) => {
-  res.redirect(URLS.linkedin);
+  linkedinHandler(res);
 });
 app.get("/linkedin/:path(*)?", (_, res) => {
-  res.redirect(URLS.linkedin);
+  linkedinHandler(res);
 });
 
 app.get("/x/:path(*)?", (_, res) => {
-  res.redirect(URLS.twitter);
+  twitterHandler(res);
 });
 app.get("/twitter/:path(*)?", (_, res) => {
-  res.redirect(URLS.twitter);
+  twitterHandler(res);
 });
 
 app.get("/email", (_, res) => {
@@ -103,7 +116,7 @@ app.get("/healthcheck", (_, res) => {
 });
 
 app.get("/:path(*)?", (req, res) => {
-  res.redirect(prepareUrlWithPathAndQueryParams(req, URLS.website));
+  res.redirect(prepareUrl(req, "", URLS.website));
 });
 
 app.use(Sentry.Handlers.errorHandler());
@@ -112,18 +125,45 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
-function prepareUrlWithPath(req, url) {
-  const path = req.params.path ?? "";
-  return `${url}${path}`;
+/**
+ * @param {express.Request} req
+ * @param {string} pathToRemove
+ * @param {string} url
+ */
+function prepareUrlWithPath(req, pathToRemove, url) {
+  const regex = new RegExp("^" + pathToRemove + "/?", "g");
+  return `${url}${req.url.replace(regex, "")}`;
 }
 
-function prepareUrlWithQueryParams(req, url) {
-  const queryParams = req.query ?? "";
-  const queryString = new URLSearchParams(queryParams).toString() ?? "";
+/**
+ * @param {string} url
+ */
+function prepareUrlWithUtmParams(url) {
+  const actualUrl = new URL(url);
+  const queryParams = actualUrl.searchParams;
+  const utmParams = {
+    utm_source: "arpit.im",
+    utm_medium: "redirect",
+    utm_campaign: "url-shortener",
+  };
+  queryParams.append("utm_source", utmParams.utm_source);
+  queryParams.append("utm_medium", utmParams.utm_medium);
+  queryParams.append("utm_campaign", utmParams.utm_campaign);
+  const queryString = queryParams.toString();
   return `${url}?${queryString}`;
 }
 
-function prepareUrlWithPathAndQueryParams(req, url) {
-  const urlWithPath = prepareUrlWithPath(req, url);
-  return prepareUrlWithQueryParams(req, urlWithPath);
+/**
+ * @param {express.Request} req - The request object
+ * @param {string} pathToRemove - The path to remove with a starting /
+ * @param {string} url - The URL to redirect to
+ * @example
+ * prepareUrl({
+ *  req,
+ *  pathToRemove: "/b",
+ *  url: "https://blog.arpitdalal.dev/"
+ * });
+ */
+function prepareUrl(req, pathToRemove, url) {
+  return prepareUrlWithUtmParams(prepareUrlWithPath(req, pathToRemove, url));
 }

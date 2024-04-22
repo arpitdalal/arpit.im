@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test:e2e": "npm run test:e2e:dev --silent",
+    "test:e2e:dev": "cross-env NODE_ENV=test playwright test --ui",
+    "test:e2e:run": "cross-env CI=true playwright test",
+    "test:e2e:install": "npx playwright install --with-deps chromium"
   },
   "author": {
     "name": "Arpit Dalal",
@@ -14,12 +18,15 @@
   },
   "dependencies": {
     "@sentry/node": "^7.111.0",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "posthog-node": "^4.0.0"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.5",
+    "@playwright/test": "^1.43.1",
+    "@types/node": "^20.12.7",
     "nodemon": "^3.1.0"
   },
   "engines": {
