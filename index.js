@@ -143,7 +143,9 @@ function prepareUrlWithUtmParams(req, url) {
   const referer = req.headers.referer;
   const actualUrl = new URL(url);
   const queryParams = actualUrl.searchParams;
-  const utmSource = queryParams.get("utm_source") ?? referer ?? "arpit.im";
+  const refererHostname = referer ? new URL(referer).hostname : null;
+  const utmSource =
+    queryParams.get("utm_source") ?? refererHostname ?? "arpit.im";
   const utmMedium =
     queryParams.get("utm_medium") ?? (referer ? "social" : "redirect");
   const utmCampaign = queryParams.get("utm_campaign") ?? "url-shortener";
