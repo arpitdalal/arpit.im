@@ -137,20 +137,19 @@ function prepareUrlWithPath(req, pathToRemove, url) {
 
 /**
  * @param {string} url
+ * TODO: get utm source and medium from where the request is coming from
+ * example: someone clicks on "arpit.im" link on twitter, then utm_source should be "twitter" and utm_medium should be "social"
  */
 function prepareUrlWithUtmParams(url) {
   const actualUrl = new URL(url);
   const queryParams = actualUrl.searchParams;
-  const utmParams = {
-    utm_source: "arpit.im",
-    utm_medium: "redirect",
-    utm_campaign: "url-shortener",
-  };
-  queryParams.append("utm_source", utmParams.utm_source);
-  queryParams.append("utm_medium", utmParams.utm_medium);
-  queryParams.append("utm_campaign", utmParams.utm_campaign);
-  const queryString = queryParams.toString();
-  return `${url}?${queryString}`;
+  const utmSource = queryParams.get("utm_source") ?? "arpit.im";
+  const utmMedium = queryParams.get("utm_medium") ?? "redirect";
+  const utmCampaign = queryParams.get("utm_campaign") ?? "url-shortener";
+  queryParams.set("utm_source", utmSource);
+  queryParams.set("utm_medium", utmMedium);
+  queryParams.set("utm_campaign", utmCampaign);
+  return actualUrl.toString();
 }
 
 /**
