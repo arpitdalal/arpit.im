@@ -136,19 +136,21 @@ function prepareUrlWithPath(req, pathToRemove, url) {
 }
 
 /**
+ * @param {express.Request} req
  * @param {string} url
- * TODO: get utm source and medium from where the request is coming from
- * example: someone clicks on "arpit.im" link on twitter, then utm_source should be "twitter" and utm_medium should be "social"
  */
-function prepareUrlWithUtmParams(url) {
+function prepareUrlWithUtmParams(req, url) {
+  const referrer = req.headers.referer;
   const actualUrl = new URL(url);
   const queryParams = actualUrl.searchParams;
-  const utmSource = queryParams.get("utm_source") ?? "arpit.im";
-  const utmMedium = queryParams.get("utm_medium") ?? "redirect";
+  const utmSource = queryParams.get("utm_source") ?? referrer ?? "arpit.im";
+  const utmMedium =
+    queryParams.get("utm_medium") ?? referrer ? "social" : "redirect";
   const utmCampaign = queryParams.get("utm_campaign") ?? "url-shortener";
   queryParams.set("utm_source", utmSource);
   queryParams.set("utm_medium", utmMedium);
   queryParams.set("utm_campaign", utmCampaign);
+  console.log(actualUrl.toString());
   return actualUrl.toString();
 }
 
@@ -164,5 +166,8 @@ function prepareUrlWithUtmParams(url) {
  * });
  */
 function prepareUrl(req, pathToRemove, url) {
-  return prepareUrlWithUtmParams(prepareUrlWithPath(req, pathToRemove, url));
+  return prepareUrlWithUtmParams(
+    req,
+    prepareUrlWithPath(req, pathToRemove, url)
+  );
 }
