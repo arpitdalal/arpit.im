@@ -140,17 +140,16 @@ function prepareUrlWithPath(req, pathToRemove, url) {
  * @param {string} url
  */
 function prepareUrlWithUtmParams(req, url) {
-  const referrer = req.headers.referer;
+  const referer = req.headers.referer;
   const actualUrl = new URL(url);
   const queryParams = actualUrl.searchParams;
-  const utmSource = queryParams.get("utm_source") ?? referrer ?? "arpit.im";
+  const utmSource = queryParams.get("utm_source") ?? referer ?? "arpit.im";
   const utmMedium =
-    queryParams.get("utm_medium") ?? referrer ? "social" : "redirect";
+    queryParams.get("utm_medium") ?? (referer ? "social" : "redirect");
   const utmCampaign = queryParams.get("utm_campaign") ?? "url-shortener";
   queryParams.set("utm_source", utmSource);
   queryParams.set("utm_medium", utmMedium);
   queryParams.set("utm_campaign", utmCampaign);
-  console.log(actualUrl.toString());
   return actualUrl.toString();
 }
 
