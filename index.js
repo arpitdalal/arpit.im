@@ -1,10 +1,21 @@
 import "dotenv/config";
 import express from "express";
 import * as Sentry from "@sentry/node";
+import { PostHog } from "posthog-node";
 
 if (!process.env.SENTRY_DSN) {
   throw new Error("SENTRY_DSN is not defined in the environment variables.");
 }
+if (!process.env.POSTHOG_API_KEY) {
+  throw new Error(
+    "POSTHOG_API_KEY is not defined in the environment variables."
+  );
+}
+
+const posthogClient = new PostHog(process.env.POSTHOG_API_KEY, {
+  host: "https://us.i.posthog.com",
+});
+
 const MODE = process.env.NODE_ENV;
 
 const app = express();
@@ -28,6 +39,21 @@ Sentry.init({
 
 app.use(Sentry.Handlers.requestHandler());
 app.use(Sentry.Handlers.tracingHandler());
+
+app.use((req, _, next) => {
+  posthogClient.capture({
+    distinctId: req.ip,
+    event: "pageview",
+    properties: {
+      path: req.path,
+      url: req.originalUrl,
+      method: req.method,
+      headers: req.headers,
+    },
+  });
+
+  next();
+});
 
 const URLS = {
   website: "https://arpitdalal.dev/",

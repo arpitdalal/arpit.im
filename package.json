@@ -15,7 +15,8 @@
   "dependencies": {
     "@sentry/node": "^7.111.0",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "posthog-node": "^4.0.0"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.5",
