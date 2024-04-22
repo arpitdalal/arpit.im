@@ -78,6 +78,8 @@ app.get("/:path(*)?", (req, res) => {
   res.redirect(prepareUrlWithPathAndQueryParams(req, URLS.website));
 });
 
+app.use(Sentry.Handlers.errorHandler());
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
