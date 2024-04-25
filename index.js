@@ -63,6 +63,7 @@ const URLS = {
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
   twitter: "https://twitter.com/arpitdalal_dev/",
+  youtube: "https://youtube.com/@arpitdalal_dev/",
   mail: "mailto:arpitdalalm@gmail.com",
 };
 
@@ -77,6 +78,9 @@ function linkedinHandler(res) {
 }
 function twitterHandler(res) {
   res.redirect(URLS.twitter);
+}
+function youtubeHandler(res) {
+  res.redirect(URLS.youtube);
 }
 
 app.get("/b/:path(*)?", (req, res) => {
@@ -105,6 +109,13 @@ app.get("/x/:path(*)?", (_, res) => {
 });
 app.get("/twitter/:path(*)?", (_, res) => {
   twitterHandler(res);
+});
+
+app.get("/yt/:path(*)?", (_, res) => {
+  youtubeHandler(res);
+});
+app.get("/youtube/:path(*)?", (_, res) => {
+  youtubeHandler(res);
 });
 
 app.get("/email", (_, res) => {
