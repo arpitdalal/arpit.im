@@ -154,7 +154,16 @@ function prepareUrlWithUtmParams(req, url) {
   const referer = req.headers.referer;
   const actualUrl = new URL(url);
   const queryParams = actualUrl.searchParams;
-  const refererHostname = referer ? new URL(referer).hostname : null;
+  let refererHostname = null;
+  try {
+    const refererUrl = referer ? new URL(referer) : null;
+    if (refererUrl) {
+      refererHostname = refererUrl.hostname;
+    }
+  } catch (error) {
+    console.error(error);
+    Sentry.captureException(error);
+  }
   const utmSource =
     queryParams.get("utm_source") ?? refererHostname ?? "arpit.im";
   const utmMedium =
