@@ -65,6 +65,7 @@ const URLS = {
   twitter: "https://twitter.com/arpitdalal_dev/",
   youtube: "https://youtube.com/@arpitdalal_dev/",
   mail: "mailto:arpitdalalm@gmail.com",
+  xman: "https://xman.arpitdalal.dev/",
 };
 
 function blogHandler(req, res, pathToRemove) {
@@ -120,6 +121,10 @@ app.get("/youtube/:path(*)?", (_, res) => {
 
 app.get("/email", (_, res) => {
   res.redirect(URLS.mail);
+});
+
+app.get("/xman/:path(*)?", (req, res) => {
+  res.redirect(prepareUrl(req, "/xman", URLS.xman));
 });
 
 app.get("/healthcheck", (_, res) => {
