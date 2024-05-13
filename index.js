@@ -66,6 +66,7 @@ const URLS = {
   youtube: "https://youtube.com/@arpitdalal_dev/",
   mail: "mailto:arpitdalalm@gmail.com",
   xman: "https://xman.arpitdalal.dev/",
+  "epic-content-stack": "https://github.com/arpitdalal/epic-content-stack",
 };
 
 function blogHandler(req, res, pathToRemove) {
@@ -82,6 +83,9 @@ function twitterHandler(res) {
 }
 function youtubeHandler(res) {
   res.redirect(URLS.youtube);
+}
+function epicContentStackHandler(res) {
+  res.redirect(URLS["epic-content-stack"]);
 }
 
 app.get("/b/:path(*)?", (req, res) => {
@@ -117,6 +121,13 @@ app.get("/yt/:path(*)?", (_, res) => {
 });
 app.get("/youtube/:path(*)?", (_, res) => {
   youtubeHandler(res);
+});
+
+app.get("/epc/:path(*)?", (_, res) => {
+  epicContentStackHandler(res);
+});
+app.get("/epic-content-stack/:path(*)?", (_, res) => {
+  epicContentStackHandler(res);
 });
 
 app.get("/email", (_, res) => {
