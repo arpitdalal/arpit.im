@@ -59,7 +59,11 @@ app.use((req, _, next) => {
 
 const URLS = {
   website: "https://arpitdalal.dev/",
-  blog: "https://blog.arpitdalal.dev/",
+  blog: {
+    home: "https://blog.arpitdalal.dev/",
+    "notion-url":
+      "https://blog.arpitdalal.dev/enhancing-user-experience-with-notion-style-url-architecture",
+  },
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
   twitter: "https://twitter.com/arpitdalal_dev/",
@@ -69,8 +73,19 @@ const URLS = {
   "epic-content-stack": "https://github.com/arpitdalal/epic-content-stack",
 };
 
-function blogHandler(req, res, pathToRemove) {
-  res.redirect(prepareUrl(req, pathToRemove, URLS.blog));
+function blogHandler(req, res, rawPath, pathToRemove) {
+  const path = rawPath.replace(pathToRemove + "/", "");
+  const blogNames = Object.keys(URLS.blog);
+
+  if (blogNames.includes(path)) {
+    // using prepareUrlWithUtmParams instead of prepareUrl to avoid path duplication
+    // this happens because prepareUrl adds the path again to the url
+    // eg: https://arpit.im/b/notion-url/ -> https://arpit.im/blog/enhancing-user-experience-with-notion-style-url-architecturenotion-url
+    // notice the `notion-url` at the end
+    return res.redirect(prepareUrlWithUtmParams(req, URLS.blog[path]));
+  }
+
+  res.redirect(prepareUrl(req, pathToRemove, URLS.blog.home));
 }
 function githubHandler(req, res, pathToRemove) {
   res.redirect(prepareUrlWithPath(req, pathToRemove, URLS.github));
@@ -89,10 +104,14 @@ function epicContentStackHandler(res) {
 }
 
 app.get("/b/:path(*)?", (req, res) => {
-  blogHandler(req, res, "/b");
+  blogHandler(req, res, req.path, "/b");
 });
 app.get("/blog/:path(*)?", (req, res) => {
-  blogHandler(req, res, "/blog");
+  blogHandler(req, res, req.path, "/blog");
+});
+
+app.get("/notion-url", (req, res) => {
+  res.redirect(prepareUrl(req, "notion-url", URLS.blog["notion-url"]));
 });
 
 app.get("/gh/:path(*)?", (req, res) => {
@@ -153,13 +172,21 @@ app.listen(port, () => {
 });
 
 /**
+ * @param {string} url
+ * @param {string} pathToRemove
+ */
+function removePathFromUrl(url, pathToRemove) {
+  const regex = new RegExp("^" + pathToRemove + "/?", "g");
+  return url.replace(regex, "");
+}
+
+/**
  * @param {express.Request} req
  * @param {string} pathToRemove
  * @param {string} url
  */
 function prepareUrlWithPath(req, pathToRemove, url) {
-  const regex = new RegExp("^" + pathToRemove + "/?", "g");
-  return `${url}${req.url.replace(regex, "")}`;
+  return `${url}${removePathFromUrl(req.url, pathToRemove)}`;
 }
 
 /**
