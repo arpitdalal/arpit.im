@@ -20,14 +20,14 @@
     "@sentry/node": "^7.111.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "posthog-node": "^4.0.0"
+    "express": "^4.21.1",
+    "posthog-node": "^4.2.0"
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.5.5",
-    "@playwright/test": "^1.43.1",
-    "@types/node": "^20.12.7",
-    "nodemon": "^3.1.0"
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.7.5",
+    "nodemon": "^3.1.7"
   },
   "engines": {
     "node": "20"
