@@ -66,7 +66,7 @@ const URLS = {
   },
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
-  twitter: "https://twitter.com/arpitdalal_dev/",
+  x: "https://x.com/arpitdalal_dev/",
   youtube: "https://youtube.com/@arpitdalal_dev/",
   mail: "mailto:arpitdalalm@gmail.com",
   xman: "https://xman.arpitdalal.dev/",
@@ -93,8 +93,8 @@ function githubHandler(req, res, pathToRemove) {
 function linkedinHandler(res) {
   res.redirect(URLS.linkedin);
 }
-function twitterHandler(res) {
-  res.redirect(URLS.twitter);
+function xHandler(res) {
+  res.redirect(URLS.x);
 }
 function youtubeHandler(res) {
   res.redirect(URLS.youtube);
@@ -129,10 +129,10 @@ app.get("/linkedin/:path(*)?", (_, res) => {
 });
 
 app.get("/x/:path(*)?", (_, res) => {
-  twitterHandler(res);
+  xHandler(res);
 });
 app.get("/twitter/:path(*)?", (_, res) => {
-  twitterHandler(res);
+  xHandler(res);
 });
 
 app.get("/yt/:path(*)?", (_, res) => {
