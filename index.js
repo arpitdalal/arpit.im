@@ -67,6 +67,7 @@ const URLS = {
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
   x: "https://x.com/arpitdalal_dev/",
+  bsky: "https://bsky.app/profile/arpitdalal.dev",
   youtube: "https://youtube.com/@arpitdalal_dev/",
   mail: "mailto:arpitdalalm@gmail.com",
   xman: "https://xman.arpitdalal.dev/",
@@ -97,6 +98,9 @@ function linkedinHandler(res) {
 }
 function xHandler(res) {
   res.redirect(URLS.x);
+}
+function bskyHandler(res) {
+  res.redirect(URLS.bsky);
 }
 function youtubeHandler(res) {
   res.redirect(URLS.youtube);
@@ -137,6 +141,13 @@ app.get("/x/:path(*)?", (_, res) => {
 });
 app.get("/twitter/:path(*)?", (_, res) => {
   xHandler(res);
+});
+
+app.get("/bsky/:path(*)?", (_, res) => {
+  bskyHandler(res);
+});
+app.get("/%F0%9F%A6%8B/:path(*)?", (_, res) => {
+  bskyHandler(res);
 });
 
 app.get("/yt/:path(*)?", (_, res) => {
