@@ -85,7 +85,9 @@ function blogHandler(req, res, rawPath, pathToRemove) {
     return res.redirect(prepareUrlWithUtmParams(req, URLS.blog[path]));
   }
 
-  res.redirect(prepareUrl(req, pathToRemove, URLS.blog.home));
+  res.redirect(
+    prepareUrlWithUtmParamsAndPath(req, pathToRemove, URLS.blog.home)
+  );
 }
 function githubHandler(req, res, pathToRemove) {
   res.redirect(prepareUrlWithPath(req, pathToRemove, URLS.github));
@@ -111,7 +113,9 @@ app.get("/blog/:path(*)?", (req, res) => {
 });
 
 app.get("/notion-url", (req, res) => {
-  res.redirect(prepareUrl(req, "notion-url", URLS.blog["notion-url"]));
+  res.redirect(
+    prepareUrlWithUtmParamsAndPath(req, "notion-url", URLS.blog["notion-url"])
+  );
 });
 
 app.get("/gh/:path(*)?", (req, res) => {
@@ -154,7 +158,7 @@ app.get("/email", (_, res) => {
 });
 
 app.get("/xman/:path(*)?", (req, res) => {
-  res.redirect(prepareUrl(req, "/xman", URLS.xman));
+  res.redirect(prepareUrlWithUtmParamsAndPath(req, "/xman", URLS.xman));
 });
 
 app.get("/healthcheck", (_, res) => {
@@ -162,7 +166,7 @@ app.get("/healthcheck", (_, res) => {
 });
 
 app.get("/:path(*)?", (req, res) => {
-  res.redirect(prepareUrl(req, "", URLS.website));
+  res.redirect(prepareUrlWithUtmParamsAndPath(req, "", URLS.website));
 });
 
 app.use(Sentry.Handlers.errorHandler());
@@ -223,13 +227,13 @@ function prepareUrlWithUtmParams(req, url) {
  * @param {string} pathToRemove - The path to remove with a starting /
  * @param {string} url - The URL to redirect to
  * @example
- * prepareUrl({
+ * prepareUrlWithUtmParamsAndPath({
  *  req,
  *  pathToRemove: "/b",
  *  url: "https://blog.arpitdalal.dev/"
  * });
  */
-function prepareUrl(req, pathToRemove, url) {
+function prepareUrlWithUtmParamsAndPath(req, pathToRemove, url) {
   return prepareUrlWithUtmParams(
     req,
     prepareUrlWithPath(req, pathToRemove, url)
