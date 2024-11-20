@@ -146,6 +146,7 @@ app.get("/twitter/:path(*)?", (_, res) => {
 app.get("/bsky/:path(*)?", (_, res) => {
   bskyHandler(res);
 });
+//       encodeURI('🦋')
 app.get("/%F0%9F%A6%8B/:path(*)?", (_, res) => {
   bskyHandler(res);
 });
