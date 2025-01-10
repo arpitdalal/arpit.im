@@ -63,6 +63,7 @@ const URLS = {
     home: "https://blog.arpitdalal.dev/",
     "notion-url":
       "https://blog.arpitdalal.dev/enhancing-user-experience-with-notion-style-url-architecture",
+    "ai-divide": "https://blog.arpitdalal.dev/the-ai-developer-divide-autonomous-agents-vs-coding-companions"
   },
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
