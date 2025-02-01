@@ -44,8 +44,9 @@ app.use((req, _, next) => {
   if (req.url !== "/healthcheck") {
     posthogClient.capture({
       distinctId: req.ip,
-      event: "pageview",
+      event: "$pageview",
       properties: {
+        $current_url: req.originalUrl,
         path: req.path,
         url: req.originalUrl,
         method: req.method,
@@ -186,6 +187,12 @@ app.use(Sentry.Handlers.errorHandler());
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+process.on("SIGINT", async () => {
+  console.log("SIGINT signal received.");
+  await posthogClient.shutdown();
+  process.exit(0);
 });
 
 /**
