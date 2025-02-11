@@ -160,7 +160,7 @@ app.get("/youtube/:path(*)?", (_, res) => {
   youtubeHandler(res);
 });
 
-app.get("/epc/:path(*)?", (_, res) => {
+app.get("/ecs/:path(*)?", (_, res) => {
   epicContentStackHandler(res);
 });
 app.get("/epic-content-stack/:path(*)?", (_, res) => {

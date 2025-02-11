@@ -9,10 +9,10 @@ test('"/epic-content-stack" redirects to "github.com/arpitdalal/epic-content-sta
     "https://github.com/arpitdalal/epic-content-stack"
   );
 });
-test('"/epc" redirects to "github.com/arpitdalal/epic-content-stack" without utm params', async ({
+test('"/ecs" redirects to "github.com/arpitdalal/epic-content-stack" without utm params', async ({
   page,
 }) => {
-  await page.goto("/epc");
+  await page.goto("/ecs");
 
   await expect(page).toHaveURL(
     "https://github.com/arpitdalal/epic-content-stack"
