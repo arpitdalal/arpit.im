@@ -71,6 +71,7 @@ const URLS = {
   x: "https://x.com/arpitdalal_dev/",
   bsky: "https://bsky.app/profile/arpitdalal.dev",
   youtube: "https://youtube.com/@arpitdalal_dev/",
+  live: "https://www.youtube.com/channel/UCKi0CBLeunUbvhdrnrLrr9Q/live",
   mail: "mailto:arpitdalalm@gmail.com",
   xman: "https://xman.arpitdalal.dev/",
   "epic-content-stack": "https://github.com/arpitdalal/epic-content-stack",
@@ -158,6 +159,10 @@ app.get("/yt/:path(*)?", (_, res) => {
 });
 app.get("/youtube/:path(*)?", (_, res) => {
   youtubeHandler(res);
+});
+
+app.get("/live/:path(*)?", (_, res) => {
+  res.redirect(URLS.live);
 });
 
 app.get("/ecs/:path(*)?", (_, res) => {
