@@ -66,6 +66,8 @@ const URLS = {
       "https://blog.arpitdalal.dev/enhancing-user-experience-with-notion-style-url-architecture",
     "ai-divide":
       "https://blog.arpitdalal.dev/the-ai-developer-divide-autonomous-agents-vs-coding-companions",
+    "posthog-proxy":
+      "https://blog.arpitdalal.dev/setup-posthog-reverse-proxy-with-remix-react-router",
   },
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
