@@ -64,7 +64,8 @@ const URLS = {
     home: "https://blog.arpitdalal.dev/",
     "notion-url":
       "https://blog.arpitdalal.dev/enhancing-user-experience-with-notion-style-url-architecture",
-    "ai-divide": "https://blog.arpitdalal.dev/the-ai-developer-divide-autonomous-agents-vs-coding-companions"
+    "ai-divide":
+      "https://blog.arpitdalal.dev/the-ai-developer-divide-autonomous-agents-vs-coding-companions",
   },
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
@@ -227,14 +228,16 @@ function prepareUrlWithUtmParams(req, url) {
   const actualUrl = new URL(url);
   const queryParams = actualUrl.searchParams;
   let refererHostname = null;
-  try {
-    const refererUrl = referer ? new URL(referer) : null;
-    if (refererUrl) {
-      refererHostname = refererUrl.hostname;
+  if (URL.canParse(referer)) {
+    try {
+      const refererUrl = referer ? new URL(referer) : null;
+      if (refererUrl) {
+        refererHostname = refererUrl.hostname;
+      }
+    } catch (error) {
+      console.error(error);
+      Sentry.captureException(error);
     }
-  } catch (error) {
-    console.error(error);
-    Sentry.captureException(error);
   }
   const utmSource =
     queryParams.get("utm_source") ?? refererHostname ?? "arpit.im";
