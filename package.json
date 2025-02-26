@@ -4,12 +4,8 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js",
-    "test:e2e": "npm run test:e2e:dev --silent",
-    "test:e2e:dev": "cross-env NODE_ENV=test playwright test --ui",
-    "test:e2e:run": "cross-env CI=true playwright test",
-    "test:e2e:install": "npx playwright install --with-deps chromium"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify"
   },
   "author": {
     "name": "Arpit Dalal",
@@ -17,19 +13,17 @@
     "url": "https://arpitdalal.dev"
   },
   "dependencies": {
-    "@sentry/node": "^7.111.0",
-    "cross-env": "^7.0.3",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "posthog-node": "^4.2.0"
+    "@hono/sentry": "^1.2.0",
+    "hono": "^4.7.2",
+    "valibot": "^1.0.0-rc.2"
   },
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.5.5",
-    "@playwright/test": "^1.48.0",
-    "@types/node": "^22.7.5",
-    "nodemon": "^3.1.7"
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/bun": "^1.2.4",
+    "wrangler": "^3.110.0"
   },
+  "module": "src/index.ts",
   "engines": {
-    "node": "20"
+    "bun": "1.2.4"
   }
 }

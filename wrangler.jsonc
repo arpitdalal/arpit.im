@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "arpit-im-cf",
+  "main": "src/index.ts",
+  "minify": true,
+  "compatibility_date": "2025-02-26",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "env": {
+    "staging": {
+      "vars": {
+        "NODE_ENV": "development"
+      }
+    },
+    "production": {
+      "vars": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+  // "kv_namespaces": [
+  //   {
+  //     "binding": "MY_KV_NAMESPACE",
+  //     "id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  //   }
+  // ],
+  // "observability": {
+  //   "enabled": true,
+  //   "head_sampling_rate": 1
+  // }
+}

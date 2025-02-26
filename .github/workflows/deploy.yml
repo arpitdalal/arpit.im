@@ -15,9 +15,9 @@ permissions:
 
 jobs:
 
-  playwright:
-    name: 🎭 Playwright
-    runs-on: ubuntu-22.04
+  test:
+    name: 🧪 Test
+    runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
       - name: ⬇️ Checkout repo
@@ -26,32 +26,21 @@ jobs:
       - name: 🏄 Copy test env vars
         run: cp .env.example .env
 
-      - name: ⎔ Setup node
-        uses: actions/setup-node@v4
+      - name: ⎔ Setup bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: 20
+          bun-version: 1.2.4
 
       - name: 📥 Download deps
-        uses: bahmutov/npm-install@v1
+        run: bun install
 
-      - name: 📥 Install Playwright Browsers
-        run: npm run test:e2e:install
-
-      - name: 🎭 Playwright tests
-        run: npx playwright test
-
-      - name: 📊 Upload report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+      - name: 🧪 Test
+        run: bun test
 
   deploy:
     name: 🚀 Deploy
-    runs-on: ubuntu-22.04
-    needs: [playwright]
+    runs-on: ubuntu-latest
+    needs: [test]
     # only build/deploy branches on pushes
     if: ${{ github.event_name == 'push' }}
 
@@ -59,19 +48,8 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: 👀 Read app name
-        uses: SebRollen/toml-action@v1.2.0
-        id: app_name
-        with:
-          file: 'fly.toml'
-          field: 'app'
-
-      - name: 🎈 Setup Fly
-        uses: superfly/flyctl-actions/setup-flyctl@1.5
-
       - name: 🚀 Deploy Production
         if: ${{ github.ref == 'refs/heads/main' }}
-        run:
-          flyctl deploy --remote-only --build-arg COMMIT_SHA=${{ github.sha }}
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
