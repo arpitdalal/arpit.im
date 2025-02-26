@@ -48,6 +48,11 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
+      - name: ⎔ Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.2.4
+
       - name: 🚀 Deploy Production
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: cloudflare/wrangler-action@v3
