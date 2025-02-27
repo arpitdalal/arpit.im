@@ -56,9 +56,24 @@ jobs:
       - name: 📥 Download deps
         run: bun install
 
+      - name: 🔒 Set Worker Secrets
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          bunx wrangler secret put UMAMI_SITE_ID --env production
+          bunx wrangler secret put UMAMI_HOST_URL --env production
+          bunx wrangler secret put SENTRY_DSN --env production
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
+          UMAMI_HOST_URL: ${{ secrets.UMAMI_HOST_URL }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
       - name: 🚀 Deploy Production
         if: ${{ github.ref == 'refs/heads/main' }}
         run:
-          bunx wrangler deploy
+          bunx wrangler deploy --env production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
+          UMAMI_HOST_URL: ${{ secrets.UMAMI_HOST_URL }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}

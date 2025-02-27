@@ -15,7 +15,10 @@
     },
     "production": {
       "vars": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "UMAMI_SITE_ID": "",
+        "UMAMI_HOST_URL": "",
+        "SENTRY_DSN": ""
       }
     }
   }

@@ -1,15 +1,36 @@
 import { sentry } from "@hono/sentry";
+import umami from "@umami/node";
 import { type Toucan as Sentry } from "toucan-js";
 import { Hono, type HonoRequest, type Context } from "hono";
 import { literal, union, safeParse } from "valibot";
 
 type Redirect = Context["redirect"];
 export interface Bindings {
-  NODE_ENV: string;
+  UMAMI_SITE_ID: string;
+  UMAMI_HOST_URL: string;
 }
 
 const app = new Hono<{ Bindings: Bindings }>();
 app.use("*", sentry());
+
+app.use("*", async (c, next) => {
+  umami.init({
+    websiteId: c.env.UMAMI_SITE_ID,
+    hostUrl: c.env.UMAMI_HOST_URL,
+  });
+
+  if (!c.req.url.includes("healthcheck")) {
+    await umami.send({
+      website: c.env.UMAMI_SITE_ID,
+      hostname: "arpit.im",
+      referrer: c.req.header("Referer"),
+      url: c.req.url,
+      language: c.req.header("Accept-Language"),
+    });
+  }
+
+  return next();
+});
 
 const URLS = {
   website: "https://arpitdalal.dev/",

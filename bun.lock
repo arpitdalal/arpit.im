@@ -5,6 +5,7 @@
       "name": "arpit.im-cf",
       "dependencies": {
         "@hono/sentry": "^1.2.0",
+        "@umami/node": "^0.4.0",
         "hono": "^4.7.2",
         "valibot": "^1.0.0-rc.2",
       },
@@ -143,6 +144,8 @@
     "@types/node": ["@types/node@22.13.5", "", { "dependencies": { "undici-types": "~6.20.0" } }, "sha512-+lTU0PxZXn0Dr1NBtC7Y8cR21AJr87dLLU953CWA6pMxxv/UDc7jYAY90upcrie1nRcD6XNG5HOYEDtgW5TxAg=="],
 
     "@types/ws": ["@types/ws@8.5.14", "", { "dependencies": { "@types/node": "*" } }, "sha512-bd/YFLW+URhBzMXurx7lWByOu+xzU9+kb3RboOteXYDfW+tr+JZa99OyNmPINEGB/ahzKrEuc8rcv4gnpJmxTw=="],
+
+    "@umami/node": ["@umami/node@0.4.0", "", {}, "sha512-pyphprbiF7KiDSc+SWZ4/rVM8B5vU27zIiFfEPj2lEqczpI4xAKSp+dM3tlzyRAWJL32fcbCfAaLGhJZQV13Rg=="],
 
     "acorn": ["acorn@8.14.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA=="],
 
