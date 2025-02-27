@@ -59,9 +59,9 @@ jobs:
       - name: 🔒 Set Worker Secrets
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          bunx wrangler secret put UMAMI_SITE_ID --env production
-          bunx wrangler secret put UMAMI_HOST_URL --env production
-          bunx wrangler secret put SENTRY_DSN --env production
+          bunx wrangler secret put UMAMI_SITE_ID
+          bunx wrangler secret put UMAMI_HOST_URL
+          bunx wrangler secret put SENTRY_DSN
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
@@ -71,7 +71,7 @@ jobs:
       - name: 🚀 Deploy Production
         if: ${{ github.ref == 'refs/heads/main' }}
         run:
-          bunx wrangler deploy --env production
+          bunx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
