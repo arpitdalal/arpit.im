@@ -14,19 +14,21 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use("*", sentry());
 
 app.use("*", async (c, next) => {
-  umami.init({
-    websiteId: c.env.UMAMI_SITE_ID,
-    hostUrl: c.env.UMAMI_HOST_URL,
-  });
-
-  if (!c.req.url.includes("healthcheck")) {
-    await umami.send({
-      website: c.env.UMAMI_SITE_ID,
-      hostname: "arpit.im",
-      referrer: c.req.header("Referer"),
-      url: c.req.url,
-      language: c.req.header("Accept-Language"),
+  if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {
+    umami.init({
+      websiteId: c.env.UMAMI_SITE_ID,
+      hostUrl: c.env.UMAMI_HOST_URL,
     });
+
+    if (!c.req.url.includes("healthcheck")) {
+      await umami.send({
+        website: c.env.UMAMI_SITE_ID,
+        hostname: "arpit.im",
+        referrer: c.req.header("Referer"),
+        url: c.req.url,
+        language: c.req.header("Accept-Language"),
+      });
+    }
   }
 
   return next();
