@@ -21,6 +21,16 @@
         "SENTRY_DSN": ""
       }
     }
+  },
+  "routes": [
+    {
+      "pattern": "arpit.im/*",
+      "zone_id": "__ZONE_ID__"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
   }
   // "kv_namespaces": [
   //   {

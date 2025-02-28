@@ -56,6 +56,13 @@ jobs:
       - name: 📥 Download deps
         run: bun install
 
+      - name: 🔄 Replace zone_id placeholder
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          sed -i "s/__ZONE_ID__/${CLOUDFLARE_ZONE_ID}/g" wrangler.jsonc
+        env:
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+
       - name: 🔒 Set Worker Secrets
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
