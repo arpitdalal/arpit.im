@@ -14,6 +14,8 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use("*", sentry());
 
 app.use("*", async (c, next) => {
+  console.log("UMAMI_SITE_ID", c.env?.UMAMI_SITE_ID);
+  console.log("UMAMI_HOST_URL", c.env?.UMAMI_HOST_URL);
   if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {
     console.log("Initializing umami");
     umami.init({
