@@ -63,6 +63,13 @@ jobs:
         env:
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
 
+      - name: 🔄 Replace kv_id placeholder
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          sed -i "s/__KV_ID__/${CLOUDFLARE_KV_ID}/g" wrangler.jsonc
+        env:
+          CLOUDFLARE_KV_ID: ${{ secrets.CLOUDFLARE_KV_ID }}
+
       - name: 🔒 Set Worker Secrets
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |

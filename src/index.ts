@@ -3,18 +3,26 @@ import umami from "@umami/node";
 import { type Toucan as Sentry } from "toucan-js";
 import { Hono, type HonoRequest, type Context } from "hono";
 import { literal, union, safeParse } from "valibot";
+import { rateLimiterMiddleware } from "./kv-store-middleware";
 
 type Redirect = Context["redirect"];
 export interface Env {
   UMAMI_SITE_ID: string;
   UMAMI_HOST_URL: string;
   SENTRY_DSN: string;
+  RATE_LIMIT_KV: KVNamespace;
 }
 
 const app = new Hono<{ Bindings: Env }>();
 app.use("*", sentry());
 
 app.use("*", (c, next) => {
+  if (!c.env?.RATE_LIMIT_KV) return next();
+  return rateLimiterMiddleware(c, next);
+});
+
+app.use("*", (c, next) => {
+  // '?.' is necessary in tests where env is undefined
   if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {
     umami.init({
       websiteId: c.env.UMAMI_SITE_ID,
@@ -94,6 +102,7 @@ function prepareUrlWithUtmParams(
   const requestUrl = new URL(req.url);
   const queryParams = requestUrl.searchParams;
   let refererHostname = null;
+  // @ts-expect-error - canParse is not typed for some reason, works fine
   if (referer && URL.canParse(referer)) {
     try {
       const refererUrl = referer ? new URL(referer) : null;
