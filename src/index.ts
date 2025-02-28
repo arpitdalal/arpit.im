@@ -84,7 +84,6 @@ function prepareUrlWithUtmParams(
   const requestUrl = new URL(req.url);
   const queryParams = requestUrl.searchParams;
   let refererHostname = null;
-  // @ts-expect-error - canParse is not typed for some reason, works fine
   if (referer && URL.canParse(referer)) {
     try {
       const refererUrl = referer ? new URL(referer) : null;
