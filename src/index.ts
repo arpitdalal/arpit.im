@@ -4,48 +4,55 @@ import { type Toucan as Sentry } from "toucan-js";
 import { Hono, type HonoRequest, type Context } from "hono";
 import { literal, union, safeParse } from "valibot";
 
+// Add Cloudflare Worker types
+interface ExecutionContext {
+  waitUntil(promise: Promise<any>): void;
+  passThroughOnException(): void;
+}
+
+// Add global declarations for environment variables
+declare global {
+  var UMAMI_SITE_ID: string | undefined;
+  var UMAMI_HOST_URL: string | undefined;
+  var SENTRY_DSN: string | undefined;
+}
+
 type Redirect = Context["redirect"];
-export interface Bindings {
+export interface Env {
   UMAMI_SITE_ID: string;
   UMAMI_HOST_URL: string;
   SENTRY_DSN: string;
 }
 
-const app = new Hono<{ Bindings: Bindings }>();
-// Initialize sentry with explicit DSN from env
-app.use("*", async (c, next) => {
-  // Initialize sentry with explicit config
-  if (c.env.SENTRY_DSN) {
-    return sentry({
-      dsn: c.env.SENTRY_DSN,
-    })(c, next);
-  }
-  return next();
-});
+const app = new Hono<{ Bindings: Env }>();
+app.use("*", sentry());
 
 app.use("*", async (c, next) => {
-  // Debug entire env object
+  console.log("Global env access:", {
+    UMAMI_SITE_ID: globalThis.UMAMI_SITE_ID,
+    UMAMI_HOST_URL: globalThis.UMAMI_HOST_URL,
+    SENTRY_DSN: globalThis.SENTRY_DSN,
+  });
+
+  // Debug env object and context
   console.log("ENV KEYS:", Object.keys(c.env || {}));
+  console.log("env stringified", JSON.stringify(c.env, null, 2));
 
-  // Debug individual variables
-  console.log("UMAMI_SITE_ID (direct):", c.env.UMAMI_SITE_ID);
-  console.log("UMAMI_HOST_URL (direct):", c.env.UMAMI_HOST_URL);
-  console.log("SENTRY_DSN (direct):", c.env.SENTRY_DSN);
+  // Try to initialize from globals if context env is undefined
+  const umamiSiteId = c.env?.UMAMI_SITE_ID || globalThis.UMAMI_SITE_ID;
+  const umamiHostUrl = c.env?.UMAMI_HOST_URL || globalThis.UMAMI_HOST_URL;
 
-  // Original logs
-  console.log("UMAMI_SITE_ID", c.env?.UMAMI_SITE_ID);
-  console.log("UMAMI_HOST_URL", c.env?.UMAMI_HOST_URL);
-  if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {
-    console.log("Initializing umami");
+  if (umamiSiteId && umamiHostUrl) {
+    console.log("Initializing umami with:", { umamiSiteId, umamiHostUrl });
     umami.init({
-      websiteId: c.env.UMAMI_SITE_ID,
-      hostUrl: c.env.UMAMI_HOST_URL,
+      websiteId: umamiSiteId,
+      hostUrl: umamiHostUrl,
     });
 
     if (!c.req.url.includes("healthcheck")) {
       console.log("Sending umami event");
       const res = await umami.send({
-        website: c.env.UMAMI_SITE_ID,
+        website: umamiSiteId,
         hostname: "arpit.im",
         referrer: c.req.header("Referer"),
         url: c.req.url,
@@ -290,4 +297,15 @@ app.get("/*", ({ req, redirect, get }) => {
   );
 });
 
-export default app;
+// Export the worker handler
+export default {
+  fetch: (request: Request, env: Env, ctx: ExecutionContext) => {
+    // Make env variables available globally
+    globalThis.UMAMI_SITE_ID = env.UMAMI_SITE_ID;
+    globalThis.UMAMI_HOST_URL = env.UMAMI_HOST_URL;
+    globalThis.SENTRY_DSN = env.SENTRY_DSN;
+
+    // Pass request to Hono app with the environment
+    return app.fetch(request, env, ctx);
+  },
+};
