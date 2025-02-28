@@ -8,12 +8,31 @@ type Redirect = Context["redirect"];
 export interface Bindings {
   UMAMI_SITE_ID: string;
   UMAMI_HOST_URL: string;
+  SENTRY_DSN: string;
 }
 
 const app = new Hono<{ Bindings: Bindings }>();
-app.use("*", sentry());
+// Initialize sentry with explicit DSN from env
+app.use("*", async (c, next) => {
+  // Initialize sentry with explicit config
+  if (c.env.SENTRY_DSN) {
+    return sentry({
+      dsn: c.env.SENTRY_DSN,
+    })(c, next);
+  }
+  return next();
+});
 
 app.use("*", async (c, next) => {
+  // Debug entire env object
+  console.log("ENV KEYS:", Object.keys(c.env || {}));
+
+  // Debug individual variables
+  console.log("UMAMI_SITE_ID (direct):", c.env.UMAMI_SITE_ID);
+  console.log("UMAMI_HOST_URL (direct):", c.env.UMAMI_HOST_URL);
+  console.log("SENTRY_DSN (direct):", c.env.SENTRY_DSN);
+
+  // Original logs
   console.log("UMAMI_SITE_ID", c.env?.UMAMI_SITE_ID);
   console.log("UMAMI_HOST_URL", c.env?.UMAMI_HOST_URL);
   if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {

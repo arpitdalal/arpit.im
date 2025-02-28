@@ -7,18 +7,6 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "env": {
-    "staging": {
-      "vars": {
-        "NODE_ENV": "development"
-      }
-    },
-    "production": {
-      "vars": {
-        "NODE_ENV": "production"
-      }
-    }
-  },
   "routes": [
     {
       "pattern": "arpit.im/*",
