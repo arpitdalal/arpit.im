@@ -304,6 +304,7 @@ export default {
     globalThis.UMAMI_SITE_ID = env.UMAMI_SITE_ID;
     globalThis.UMAMI_HOST_URL = env.UMAMI_HOST_URL;
     globalThis.SENTRY_DSN = env.SENTRY_DSN;
+    console.log("env", env);
 
     // Pass request to Hono app with the environment
     return app.fetch(request, env, ctx);
