@@ -28,7 +28,14 @@ app.use("*", (c, next) => {
           hostname: "arpit.im",
           referrer: c.req.header("Referer"),
           url: c.req.url,
-          language: c.req.header("Accept-Language"),
+          language: c.req.header("Accept-Language") || "en-US",
+        })
+      );
+      c.executionCtx.waitUntil(
+        umami.track("pageview", {
+          url: c.req.url,
+          hostname: "arpit.im",
+          language: c.req.header("Accept-Language") || "en-US",
         })
       );
     }
