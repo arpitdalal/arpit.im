@@ -14,7 +14,7 @@ export interface Env {
 const app = new Hono<{ Bindings: Env }>();
 app.use("*", sentry());
 
-app.use("*", async (c, next) => {
+app.use("*", (c, next) => {
   if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {
     umami.init({
       websiteId: c.env.UMAMI_SITE_ID,
@@ -22,15 +22,15 @@ app.use("*", async (c, next) => {
     });
 
     if (!c.req.url.includes("healthcheck")) {
-      console.log("Sending umami event");
-      const res = await umami.send({
-        website: c.env.UMAMI_SITE_ID,
-        hostname: "arpit.im",
-        referrer: c.req.header("Referer"),
-        url: c.req.url,
-        language: c.req.header("Accept-Language"),
-      });
-      console.log("Sent umami event", await res.json());
+      c.executionCtx.waitUntil(
+        umami.send({
+          website: c.env.UMAMI_SITE_ID,
+          hostname: "arpit.im",
+          referrer: c.req.header("Referer"),
+          url: c.req.url,
+          language: c.req.header("Accept-Language"),
+        })
+      );
     }
   }
 
