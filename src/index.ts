@@ -4,19 +4,6 @@ import { type Toucan as Sentry } from "toucan-js";
 import { Hono, type HonoRequest, type Context } from "hono";
 import { literal, union, safeParse } from "valibot";
 
-// Add Cloudflare Worker types
-interface ExecutionContext {
-  waitUntil(promise: Promise<any>): void;
-  passThroughOnException(): void;
-}
-
-// Add global declarations for environment variables
-declare global {
-  var UMAMI_SITE_ID: string | undefined;
-  var UMAMI_HOST_URL: string | undefined;
-  var SENTRY_DSN: string | undefined;
-}
-
 type Redirect = Context["redirect"];
 export interface Env {
   UMAMI_SITE_ID: string;
@@ -28,31 +15,16 @@ const app = new Hono<{ Bindings: Env }>();
 app.use("*", sentry());
 
 app.use("*", async (c, next) => {
-  console.log("Global env access:", {
-    UMAMI_SITE_ID: globalThis.UMAMI_SITE_ID,
-    UMAMI_HOST_URL: globalThis.UMAMI_HOST_URL,
-    SENTRY_DSN: globalThis.SENTRY_DSN,
-  });
-
-  // Debug env object and context
-  console.log("ENV KEYS:", Object.keys(c.env || {}));
-  console.log("env stringified", JSON.stringify(c.env, null, 2));
-
-  // Try to initialize from globals if context env is undefined
-  const umamiSiteId = c.env?.UMAMI_SITE_ID || globalThis.UMAMI_SITE_ID;
-  const umamiHostUrl = c.env?.UMAMI_HOST_URL || globalThis.UMAMI_HOST_URL;
-
-  if (umamiSiteId && umamiHostUrl) {
-    console.log("Initializing umami with:", { umamiSiteId, umamiHostUrl });
+  if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {
     umami.init({
-      websiteId: umamiSiteId,
-      hostUrl: umamiHostUrl,
+      websiteId: c.env.UMAMI_SITE_ID,
+      hostUrl: c.env.UMAMI_HOST_URL,
     });
 
     if (!c.req.url.includes("healthcheck")) {
       console.log("Sending umami event");
       const res = await umami.send({
-        website: umamiSiteId,
+        website: c.env.UMAMI_SITE_ID,
         hostname: "arpit.im",
         referrer: c.req.header("Referer"),
         url: c.req.url,
@@ -297,16 +269,4 @@ app.get("/*", ({ req, redirect, get }) => {
   );
 });
 
-// Export the worker handler
-export default {
-  fetch: (request: Request, env: Env, ctx: ExecutionContext) => {
-    // Make env variables available globally
-    globalThis.UMAMI_SITE_ID = env.UMAMI_SITE_ID;
-    globalThis.UMAMI_HOST_URL = env.UMAMI_HOST_URL;
-    globalThis.SENTRY_DSN = env.SENTRY_DSN;
-    console.log("env", env);
-
-    // Pass request to Hono app with the environment
-    return app.fetch(request, env, ctx);
-  },
-};
+export default app;
