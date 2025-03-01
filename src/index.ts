@@ -17,7 +17,7 @@ const app = new Hono<{ Bindings: Env }>();
 app.use("*", sentry());
 
 app.use("*", (c, next) => {
-  if (!c.env?.RATE_LIMIT_KV) return next();
+  if (!c.env?.RATE_LIMIT_KV || c.req.url.includes("healthcheck")) return next();
   return rateLimiterMiddleware(c, next);
 });
 
