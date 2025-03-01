@@ -14,7 +14,31 @@ export interface Env {
 }
 
 const app = new Hono<{ Bindings: Env }>();
-app.use("*", sentry());
+app.use(
+  "*",
+  sentry({
+    denyUrls: [/\/healthcheck/, /\/favicons\//, /\/favicon.ico/],
+    tracesSampler(samplingContext) {
+      // ignore healthcheck transactions by other services (consul, etc.)
+      if (samplingContext.normalizedRequest?.url?.includes("/healthcheck")) {
+        return 0;
+      }
+      return 1;
+    },
+    beforeSendTransaction(event) {
+      // ignore all healthcheck related transactions
+      // note that name of header here is case-sensitive
+      if (
+        event.request?.headers?.["x-healthcheck"] === "true" ||
+        event.request?.url?.includes("healthcheck")
+      ) {
+        return null;
+      }
+
+      return event;
+    },
+  })
+);
 
 app.use("*", (c, next) => {
   if (!c.env?.RATE_LIMIT_KV || c.req.url.includes("healthcheck")) return next();
