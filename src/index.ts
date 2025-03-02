@@ -40,10 +40,10 @@ app.use(
   })
 );
 
-// app.use("*", (c, next) => {
-//   if (!c.env?.RATE_LIMIT_KV || c.req.url.includes("healthcheck")) return next();
-//   return rateLimiterMiddleware(c, next);
-// });
+app.use("*", (c, next) => {
+  if (!c.env?.RATE_LIMIT_KV || c.req.url.includes("healthcheck")) return next();
+  return rateLimiterMiddleware(c, next);
+});
 
 app.use("*", (c, next) => {
   // '?.' is necessary in tests where env is undefined
