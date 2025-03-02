@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test";
+import { test, expect } from "vitest";
 import app from "../src";
 
 test('"/epic-content-stack" redirects to "github.com/arpitdalal/epic-content-stack" without utm params', async () => {

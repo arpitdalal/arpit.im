@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test";
+import { test, expect } from "vitest";
 import app from "../src";
 
 test('"/twitter" redirects to "x.com/arpitdalal_dev" without utm params', async () => {

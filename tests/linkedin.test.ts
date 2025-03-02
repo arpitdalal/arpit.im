@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test";
+import { test, expect } from "vitest";
 import app from "../src";
 
 test('"/linkedin" redirects to "linkedin.com/in/arpitdalal" without utm params', async () => {

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy --minify"
+    "deploy": "wrangler deploy --minify",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "author": {
     "name": "Arpit Dalal",
@@ -20,8 +22,9 @@
     "valibot": "^1.0.0-rc.2"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.7.4",
     "@total-typescript/ts-reset": "^0.6.1",
-    "@types/bun": "^1.2.4",
+    "vitest": "^3.0.7",
     "wrangler": "^3.111.0"
   },
   "module": "src/index.ts",

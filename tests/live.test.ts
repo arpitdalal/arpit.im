@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test";
+import { test, expect } from "vitest";
 import app from "../src";
 
 test('"/live" redirects to "https://www.youtube.com/channel/UCKi0CBLeunUbvhdrnrLrr9Q/live"', async () => {

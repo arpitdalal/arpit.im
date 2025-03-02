@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test";
+import { test, expect } from "vitest";
 import app from "../src";
 
 test('"/xman" redirects to "xman.arpitdalal.dev/" with utm params', async () => {
