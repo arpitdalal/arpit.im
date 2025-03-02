@@ -86,6 +86,8 @@ const URLS = {
       "https://blog.arpitdalal.dev/the-ai-developer-divide-autonomous-agents-vs-coding-companions",
     "posthog-proxy":
       "https://blog.arpitdalal.dev/setup-posthog-reverse-proxy-with-remix-react-router",
+    "cf-migration":
+      "https://blog.arpitdalal.dev/my-cloudflare-workers-migration-the-good-the-bad-and-the-confusing",
   },
   github: "https://github.com/arpitdalal/",
   linkedin: "https://linkedin.com/in/arpitdalal/",
