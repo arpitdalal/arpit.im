@@ -204,6 +204,77 @@ function blogHandler(
   );
 }
 
+function generateRouteMap() {
+  const website = {
+    category: "Website",
+    items: [{ path: "/", url: URLS.website, shortforms: ["/ or /*"] }],
+  };
+
+  const blog = {
+    category: "Blog",
+    items: [
+      { path: "/blog", url: URLS.blog.home, shortforms: ["/b/* or /blog/*"] },
+      ...Object.entries(URLS.blog)
+        .filter(([key]) => key !== "home")
+        .map(([key, url]) => ({
+          path: `/${key}`,
+          url,
+          shortforms: [`/${key}`],
+        })),
+    ],
+  };
+
+  const socialAndOther = {
+    category: "Social & Other",
+    items: [
+      ...Object.entries(URLS)
+        .filter(([key]) => !["website", "blog"].includes(key))
+        .map(([key, url]) => {
+          let shortforms: string[] = [];
+          switch (key) {
+            case "github":
+              shortforms = ["/gh/* or /github/*"];
+              break;
+            case "linkedin":
+              shortforms = ["/in/* or /linkedin/*"];
+              break;
+            case "x":
+              shortforms = ["/x/* or /twitter/*"];
+              break;
+            case "bsky":
+              shortforms = ["/bsky/* or /🦋/*"];
+              break;
+            case "youtube":
+              shortforms = ["/yt/* or /youtube/*"];
+              break;
+            case "live":
+              shortforms = ["/live/*"];
+              break;
+            case "epic-content-stack":
+              shortforms = ["/ecs/* or /epic-content-stack/*"];
+              break;
+            case "mail":
+              shortforms = ["/email"];
+              break;
+            case "xman":
+              shortforms = ["/xman/*"];
+              break;
+            default:
+              shortforms = [`/${key}/*`];
+          }
+
+          return {
+            path: `/${key}`,
+            url,
+            shortforms,
+          };
+        }),
+    ],
+  };
+
+  return [website, blog, socialAndOther];
+}
+
 function githubHandler(
   req: HonoRequest,
   redirect: Redirect,
@@ -303,6 +374,98 @@ app.get("/xman/*", ({ req, redirect, get }) => {
 
 app.get("/healthcheck", (c) => {
   return c.text("OK");
+});
+
+app.get("/links", (c) => {
+  const routeMap = generateRouteMap();
+
+  const html = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>arpit.im - Available Links</title>
+      <style>
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+          line-height: 1.6;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+          color: #e4e4e4;
+          background-color: #121212;
+        }
+        h1, h2 {
+          border-bottom: 1px solid #333;
+          padding-bottom: 10px;
+          color: #ffffff;
+        }
+        a {
+          color: #58a6ff;
+          text-decoration: none;
+        }
+        a:hover {
+          text-decoration: underline;
+          color: #79c0ff;
+        }
+        .shortform {
+          display: inline-block;
+          min-width: 120px;
+          font-weight: bold;
+          margin-right: 10px;
+          color:#b4b4b4;
+        }
+        ul {
+          list-style-type: none;
+          padding-left: 0;
+        }
+        li {
+          margin-bottom: 8px;
+          padding: 8px;
+          border-radius: 4px;
+        }
+        li:hover {
+          background-color: #1f1f1f;
+        }
+        section {
+          margin-bottom: 30px;
+          padding: 15px;
+          background-color: #1a1a1a;
+          border-radius: 8px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+      </style>
+    </head>
+    <body>
+      <h1>arpit.im - Available Links</h1>
+      
+      ${routeMap
+        .map(
+          (category) => `
+        <section>
+          <h2>${category.category}</h2>
+          <ul>
+            ${category.items
+              .map(
+                (item) => `
+              <li>
+                <span class="shortform">${item.shortforms.join(", ")}</span>
+                <a href="${item.url}" target="_blank">${item.url}</a>
+              </li>
+            `
+              )
+              .join("")}
+          </ul>
+        </section>
+      `
+        )
+        .join("")}
+    </body>
+    </html>
+  `;
+
+  return c.html(html);
 });
 
 app.get("/*", ({ req, redirect, get }) => {
