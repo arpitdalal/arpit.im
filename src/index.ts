@@ -4,6 +4,7 @@ import { type Toucan as Sentry } from "toucan-js";
 import { Hono, type HonoRequest, type Context } from "hono";
 import { literal, union, safeParse } from "valibot";
 import { rateLimiterMiddleware } from "./kv-store-middleware";
+import { posthogMiddleware } from "./posthog";
 
 type Redirect = Context["redirect"];
 export interface Env {
@@ -11,6 +12,7 @@ export interface Env {
   UMAMI_HOST_URL: string;
   SENTRY_DSN: string;
   RATE_LIMIT_KV: KVNamespace;
+  POSTHOG_API_KEY: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -39,6 +41,8 @@ app.use(
     },
   })
 );
+
+app.use("*", posthogMiddleware);
 
 app.use("*", (c, next) => {
   if (!c.env?.RATE_LIMIT_KV || c.req.url.includes("healthcheck")) return next();

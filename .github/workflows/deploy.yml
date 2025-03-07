@@ -76,11 +76,13 @@ jobs:
           echo "$UMAMI_SITE_ID" | bunx wrangler secret put UMAMI_SITE_ID
           echo "$UMAMI_HOST_URL" | bunx wrangler secret put UMAMI_HOST_URL
           echo "$SENTRY_DSN" | bunx wrangler secret put SENTRY_DSN
+          echo "$POSTHOG_API_KEY" | bunx wrangler secret put POSTHOG_API_KEY
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
           UMAMI_HOST_URL: ${{ secrets.UMAMI_HOST_URL }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
 
       - name: 🚀 Deploy Production
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -88,6 +90,3 @@ jobs:
           bunx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          UMAMI_SITE_ID: ${{ secrets.UMAMI_SITE_ID }}
-          UMAMI_HOST_URL: ${{ secrets.UMAMI_HOST_URL }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
