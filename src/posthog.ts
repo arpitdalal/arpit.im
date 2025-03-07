@@ -1,4 +1,4 @@
-import { PostHog } from "posthog-node";
+import posthog, { type PostHog } from "posthog-js";
 import { createMiddleware } from "hono/factory";
 import type { Context } from "hono";
 import type { Env } from "./index";
@@ -14,8 +14,8 @@ let posthogClient: PostHog | null = null;
 export const posthogMiddleware = createMiddleware<{ Bindings: Env }>(
   async (c, next) => {
     if (!posthogClient && c.env?.POSTHOG_API_KEY) {
-      posthogClient = new PostHog(c.env?.POSTHOG_API_KEY, {
-        host: "https://us.i.posthog.com",
+      posthogClient = posthog.init(c.env?.POSTHOG_API_KEY, {
+        api_host: "https://us.i.posthog.com",
       });
 
       c.set("posthog", posthogClient);
@@ -32,9 +32,8 @@ export const posthogMiddleware = createMiddleware<{ Bindings: Env }>(
           .toString(36)
           .substring(2, 10)}`;
 
-      posthogClient.capture({
+      posthogClient.capture("$pageview", {
         distinctId: distinctId,
-        event: "$pageview",
         properties: {
           $current_url: c.req.url,
           path: c.req.path,

@@ -3,7 +3,7 @@
   "name": "arpit-im-cf",
   "main": "src/index.ts",
   "minify": true,
-  "compatibility_date": "2025-02-26",
+  "compatibility_date": "2025-02-14",
   "compatibility_flags": [
     "nodejs_compat"
   ],
