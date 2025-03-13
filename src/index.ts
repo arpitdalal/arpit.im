@@ -58,15 +58,15 @@ app.use("*", (c, next) => {
     });
 
     if (!c.req.url.includes("healthcheck")) {
-      c.executionCtx.waitUntil(
-        umami.send({
-          website: c.env.UMAMI_SITE_ID,
-          hostname: "arpit.im",
-          referrer: c.req.header("Referer"),
-          url: c.req.url,
-          language: c.req.header("Accept-Language") || "en-US",
-        })
-      );
+      // c.executionCtx.waitUntil(
+      //   umami.send({
+      //     website: c.env.UMAMI_SITE_ID,
+      //     hostname: "arpit.im",
+      //     referrer: c.req.header("Referer"),
+      //     url: c.req.url,
+      //     language: c.req.header("Accept-Language") || "en-US",
+      //   })
+      // );
       c.executionCtx.waitUntil(
         umami.track("pageview", {
           url: c.req.url,
