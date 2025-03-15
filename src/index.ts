@@ -394,15 +394,16 @@ app.get("/links", (c) => {
         body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           line-height: 1.6;
-          max-width: 800px;
+          max-width: 50rem;
           margin: 0 auto;
-          padding: 20px;
+          padding: 1.25rem;
           color: #e4e4e4;
           background-color: #121212;
+          word-break: break-all;
         }
         h1, h2 {
-          border-bottom: 1px solid #333;
-          padding-bottom: 10px;
+          border-bottom: 0.0625rem solid #333;
+          padding-bottom: 0.625rem;
           color: #ffffff;
         }
         a {
@@ -414,10 +415,7 @@ app.get("/links", (c) => {
           color: #79c0ff;
         }
         .shortform {
-          display: inline-block;
-          min-width: 120px;
           font-weight: bold;
-          margin-right: 10px;
           color:#b4b4b4;
         }
         ul {
@@ -425,19 +423,28 @@ app.get("/links", (c) => {
           padding-left: 0;
         }
         li {
-          margin-bottom: 8px;
-          padding: 8px;
-          border-radius: 4px;
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 0.625rem;
+          margin-bottom: 0.5rem;
+          padding: 0.5rem;
+          border-radius: 0.25rem;
+          transition: background-color 0.3s ease;
+        }
+        @media (max-width: 40rem) {
+          li {
+            grid-template-columns: 1fr;
+          }
         }
         li:hover {
           background-color: #1f1f1f;
         }
         section {
-          margin-bottom: 30px;
-          padding: 15px;
+          margin-bottom: 1.875rem;
+          padding: 0.9375rem;
           background-color: #1a1a1a;
-          border-radius: 8px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+          border-radius: 0.5rem;
+          box-shadow: 0 0.0625rem 0.1875rem rgba(0,0,0,0.5);
         }
       </style>
     </head>
