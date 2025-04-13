@@ -92,6 +92,7 @@ const URLS = {
       "https://blog.arpitdalal.dev/setup-posthog-reverse-proxy-with-remix-react-router",
     "cf-migration":
       "https://blog.arpitdalal.dev/my-cloudflare-workers-migration-the-good-the-bad-and-the-confusing",
+    notes: "https://blog.arpitdalal.dev/series/notes",
     "building-rapport": "https://blog.arpitdalal.dev/building-great-rapport",
   },
   github: "https://github.com/arpitdalal/",
