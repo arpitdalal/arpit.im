@@ -8,3 +8,5 @@
 - [Cloudflare Workers](https://workers.cloudflare.com) for the cutting edge infrastructure
 - [Sentry](https://sentry.io) to know when my smelly code smells
 - [Umami](https://umami.is) to know how bots are ruining my site
+- [Biome](https://biomejs.dev) to keep code squeaky clean and lightning-fast to lint/format
+- [Vitest](https://vitest.dev) to run fast, modern tests without the tears
