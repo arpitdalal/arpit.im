@@ -1,4 +1,5 @@
 import { sentry } from '@hono/sentry';
+import { regex } from 'arkregex';
 import umami from '@umami/node';
 import type { Toucan as Sentry } from 'toucan-js';
 import { Hono, type HonoRequest, type Context } from 'hono';
@@ -19,7 +20,11 @@ const app = new Hono<{ Bindings: Env }>();
 app.use(
   '*',
   sentry({
-    denyUrls: [/\/healthcheck/, /\/favicons\//, /\/favicon.ico/],
+    denyUrls: [
+      regex('/healthcheck'),
+      regex('/favicons/'),
+      regex('/favicon.ico'),
+    ],
     tracesSampler(samplingContext) {
       // ignore healthcheck transactions by other services (consul, etc.)
       if (samplingContext.normalizedRequest?.url?.includes('/healthcheck')) {
@@ -113,8 +118,8 @@ const blogNames = Object.keys(URLS.blog).filter(
 const blogNamesSchema = union(blogNames.map((name) => literal(name)));
 
 function removePathFromUrl(originalPath: string, pathToRemove: string) {
-  const regex = new RegExp(`^${pathToRemove}/?`, 'g');
-  return originalPath.replace(regex, '');
+  const pathStart = regex(`^${pathToRemove}/?`, 'g');
+  return originalPath.replace(pathStart, '');
 }
 
 function prepareUrlWithPath(

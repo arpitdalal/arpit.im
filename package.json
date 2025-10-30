@@ -20,6 +20,7 @@
   "dependencies": {
     "@hono/sentry": "^1.2.2",
     "@umami/node": "^0.4.0",
+    "arkregex": "^0.0.2",
     "hono": "^4.10.4",
     "hono-rate-limiter": "^0.4.2",
     "posthog-js": "^1.282.0",

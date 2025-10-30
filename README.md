@@ -5,6 +5,7 @@
 - [Bun](https://bun.sh) for the blazingly fast runtime
 - [Hono](https://hono.dev) to maximize the power of Bun
 - [Valibot](https://valibot.dev) to stay on the bleeding edge of type safety
+- [ArkRegex](https://arktype.io/docs/blog/arkregex) to stay on the bleeding edge of the bleeding edge
 - [Cloudflare Workers](https://workers.cloudflare.com) for the cutting edge infrastructure
 - [Sentry](https://sentry.io) to know when my smelly code smells
 - [Umami](https://umami.is) to know how bots are ruining my site
