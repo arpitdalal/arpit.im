@@ -3,10 +3,10 @@ import {
   type ConfigType as RateLimitConfiguration,
   rateLimiter,
   type Store,
-} from "hono-rate-limiter";
-import { createMiddleware } from "hono/factory";
-import type { Env, Input } from "hono/types";
-import type { Env as AppEnv } from ".";
+} from 'hono-rate-limiter';
+import { createMiddleware } from 'hono/factory';
+import type { Env, Input } from 'hono/types';
+import type { Env as AppEnv } from '.';
 
 type Options<Binding> = {
   /**
@@ -26,7 +26,7 @@ type Options<Binding> = {
 class CloudflareKVStore<
   E extends Env = Env,
   P extends string = string,
-  I extends Input = Input
+  I extends Input = Input,
 > implements Store<E, P, I>
 {
   /**
@@ -58,7 +58,7 @@ class CloudflareKVStore<
    */
   constructor(options: Options<KVNamespace>) {
     this.namespace = options.namespace;
-    this.prefix = options.prefix ?? "hrl:";
+    this.prefix = options.prefix ?? 'hrl:';
   }
 
   /**
@@ -91,7 +91,7 @@ class CloudflareKVStore<
   async get(key: string): Promise<ClientRateLimitInfo | undefined> {
     const result = await this.namespace.get<ClientRateLimitInfo>(
       this.prefixKey(key),
-      "json"
+      'json',
     );
 
     if (result) return result;
@@ -157,7 +157,7 @@ class CloudflareKVStore<
     const nowSeconds = Math.floor(Date.now() / 1000);
     return Math.max(
       resetTimeSeconds + CloudflareKVStore.KV_MIN_EXPIRATION_BUFFER,
-      nowSeconds + CloudflareKVStore.KV_MIN_EXPIRATION_BUFFER
+      nowSeconds + CloudflareKVStore.KV_MIN_EXPIRATION_BUFFER,
     );
   }
 
@@ -169,7 +169,7 @@ class CloudflareKVStore<
    */
   private async updateRecord(
     key: string,
-    payload: ClientRateLimitInfo
+    payload: ClientRateLimitInfo,
   ): Promise<void> {
     await this.namespace.put(this.prefixKey(key), JSON.stringify(payload), {
       expiration: this.calculateExpiration(payload.resetTime as Date),
@@ -193,8 +193,8 @@ export const rateLimiterMiddleware = createMiddleware<{ Bindings: AppEnv }>(
     rateLimiter<{ Bindings: AppEnv }>({
       windowMs: ONE_MINUTE,
       limit: 60,
-      standardHeaders: "draft-6",
-      keyGenerator: (c) => c.req.header("cf-connecting-ip") || "unknown",
+      standardHeaders: 'draft-6',
+      keyGenerator: (c) => c.req.header('cf-connecting-ip') || 'unknown',
       store: new CloudflareKVStore({ namespace: c.env.RATE_LIMIT_KV }),
-    })(c, next)
+    })(c, next),
 );

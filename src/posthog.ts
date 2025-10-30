@@ -1,9 +1,9 @@
-import posthog, { type PostHog } from "posthog-js";
-import { createMiddleware } from "hono/factory";
-import type { Context } from "hono";
-import type { Env } from "./index";
+import posthog, { type PostHog } from 'posthog-js';
+import { createMiddleware } from 'hono/factory';
+import type { Context } from 'hono';
+import type { Env } from './index';
 
-declare module "hono" {
+declare module 'hono' {
   interface ContextVariableMap {
     posthog: PostHog;
   }
@@ -15,16 +15,16 @@ export const posthogMiddleware = createMiddleware<{ Bindings: Env }>(
   async (c, next) => {
     if (!posthogClient && c.env?.POSTHOG_API_KEY) {
       posthogClient = posthog.init(c.env?.POSTHOG_API_KEY, {
-        api_host: "https://us.i.posthog.com",
+        api_host: 'https://us.i.posthog.com',
       });
 
-      c.set("posthog", posthogClient);
+      c.set('posthog', posthogClient);
     } else if (posthogClient) {
-      c.set("posthog", posthogClient);
+      c.set('posthog', posthogClient);
     }
     if (posthogClient) {
-      const cfRay = c.req.header("CF-Ray");
-      const requestId = c.req.header("CF-Request-ID");
+      const cfRay = c.req.header('CF-Ray');
+      const requestId = c.req.header('CF-Request-ID');
       const distinctId =
         cfRay ||
         requestId ||
@@ -32,7 +32,7 @@ export const posthogMiddleware = createMiddleware<{ Bindings: Env }>(
           .toString(36)
           .substring(2, 10)}`;
 
-      posthogClient.capture("$pageview", {
+      posthogClient.capture('$pageview', {
         distinctId: distinctId,
         properties: {
           $current_url: c.req.url,
@@ -45,9 +45,9 @@ export const posthogMiddleware = createMiddleware<{ Bindings: Env }>(
     }
 
     await next();
-  }
+  },
 );
 
 export function getPosthogClient(c: Context): PostHog | null {
-  return c.get("posthog") || null;
+  return c.get('posthog') || null;
 }

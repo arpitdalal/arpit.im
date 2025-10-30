@@ -37,4 +37,3 @@
     "include": ["src", "tests", "types", "*.{js,cjs,mjs,ts,tsx,json}"]
   }
 }
-
