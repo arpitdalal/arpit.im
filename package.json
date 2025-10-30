@@ -23,7 +23,6 @@
     "valibot": "^1.1.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.10.2",
     "@total-typescript/ts-reset": "^0.6.1",
     "vitest": "^4.0.5",
     "wrangler": "^4.45.2"
