@@ -1,12 +1,12 @@
-import { sentry } from "@hono/sentry";
-import umami from "@umami/node";
-import { type Toucan as Sentry } from "toucan-js";
-import { Hono, type HonoRequest, type Context } from "hono";
-import { literal, union, safeParse } from "valibot";
-import { rateLimiterMiddleware } from "./kv-store-middleware";
-import { posthogMiddleware } from "./posthog";
+import { sentry } from '@hono/sentry';
+import umami from '@umami/node';
+import type { Toucan as Sentry } from 'toucan-js';
+import { Hono, type HonoRequest, type Context } from 'hono';
+import { literal, union, safeParse } from 'valibot';
+import { rateLimiterMiddleware } from './kv-store-middleware';
+import { posthogMiddleware } from './posthog';
 
-type Redirect = Context["redirect"];
+type Redirect = Context['redirect'];
 export interface Env {
   UMAMI_SITE_ID: string;
   UMAMI_HOST_URL: string;
@@ -17,12 +17,12 @@ export interface Env {
 
 const app = new Hono<{ Bindings: Env }>();
 app.use(
-  "*",
+  '*',
   sentry({
     denyUrls: [/\/healthcheck/, /\/favicons\//, /\/favicon.ico/],
     tracesSampler(samplingContext) {
       // ignore healthcheck transactions by other services (consul, etc.)
-      if (samplingContext.normalizedRequest?.url?.includes("/healthcheck")) {
+      if (samplingContext.normalizedRequest?.url?.includes('/healthcheck')) {
         return 0;
       }
       return 1;
@@ -31,25 +31,25 @@ app.use(
       // ignore all healthcheck related transactions
       // note that name of header here is case-sensitive
       if (
-        event.request?.headers?.["x-healthcheck"] === "true" ||
-        event.request?.url?.includes("healthcheck")
+        event.request?.headers?.['x-healthcheck'] === 'true' ||
+        event.request?.url?.includes('healthcheck')
       ) {
         return null;
       }
 
       return event;
     },
-  })
+  }),
 );
 
-app.use("*", posthogMiddleware);
+app.use('*', posthogMiddleware);
 
-app.use("*", (c, next) => {
-  if (!c.env?.RATE_LIMIT_KV || c.req.url.includes("healthcheck")) return next();
+app.use('*', (c, next) => {
+  if (!c.env?.RATE_LIMIT_KV || c.req.url.includes('healthcheck')) return next();
   return rateLimiterMiddleware(c, next);
 });
 
-app.use("*", (c, next) => {
+app.use('*', (c, next) => {
   // '?.' is necessary in tests where env is undefined
   if (c.env?.UMAMI_SITE_ID && c.env?.UMAMI_HOST_URL) {
     umami.init({
@@ -57,7 +57,7 @@ app.use("*", (c, next) => {
       hostUrl: c.env.UMAMI_HOST_URL,
     });
 
-    if (!c.req.url.includes("healthcheck")) {
+    if (!c.req.url.includes('healthcheck')) {
       // c.executionCtx.waitUntil(
       //   umami.send({
       //     website: c.env.UMAMI_SITE_ID,
@@ -68,11 +68,11 @@ app.use("*", (c, next) => {
       //   })
       // );
       c.executionCtx.waitUntil(
-        umami.track("pageview", {
+        umami.track('pageview', {
           url: c.req.url,
-          hostname: "arpit.im",
-          language: c.req.header("Accept-Language") || "en-US",
-        })
+          hostname: 'arpit.im',
+          language: c.req.header('Accept-Language') || 'en-US',
+        }),
       );
     }
   }
@@ -81,46 +81,46 @@ app.use("*", (c, next) => {
 });
 
 const URLS = {
-  website: "https://arpitdalal.dev/",
+  website: 'https://arpitdalal.dev/',
   blog: {
-    home: "https://blog.arpitdalal.dev/",
-    "notion-url":
-      "https://blog.arpitdalal.dev/enhancing-user-experience-with-notion-style-url-architecture",
-    "ai-divide":
-      "https://blog.arpitdalal.dev/the-ai-developer-divide-autonomous-agents-vs-coding-companions",
-    "posthog-proxy":
-      "https://blog.arpitdalal.dev/setup-posthog-reverse-proxy-with-remix-react-router",
-    "cf-migration":
-      "https://blog.arpitdalal.dev/my-cloudflare-workers-migration-the-good-the-bad-and-the-confusing",
-    notes: "https://blog.arpitdalal.dev/series/notes",
-    "building-rapport": "https://blog.arpitdalal.dev/building-great-rapport",
+    home: 'https://blog.arpitdalal.dev/',
+    'notion-url':
+      'https://blog.arpitdalal.dev/enhancing-user-experience-with-notion-style-url-architecture',
+    'ai-divide':
+      'https://blog.arpitdalal.dev/the-ai-developer-divide-autonomous-agents-vs-coding-companions',
+    'posthog-proxy':
+      'https://blog.arpitdalal.dev/setup-posthog-reverse-proxy-with-remix-react-router',
+    'cf-migration':
+      'https://blog.arpitdalal.dev/my-cloudflare-workers-migration-the-good-the-bad-and-the-confusing',
+    notes: 'https://blog.arpitdalal.dev/series/notes',
+    'building-rapport': 'https://blog.arpitdalal.dev/building-great-rapport',
   },
-  github: "https://github.com/arpitdalal/",
-  linkedin: "https://linkedin.com/in/arpitdalal/",
-  x: "https://x.com/arpitdalal_dev/",
-  bsky: "https://bsky.app/profile/arpitdalal.dev",
-  youtube: "https://youtube.com/@arpitdalal_dev/",
-  live: "https://www.youtube.com/channel/UCKi0CBLeunUbvhdrnrLrr9Q/live",
-  mail: "mailto:arpitdalalm@gmail.com",
-  xman: "https://xman.arpitdalal.dev/",
-  "epic-content-stack": "https://github.com/arpitdalal/epic-content-stack",
+  github: 'https://github.com/arpitdalal/',
+  linkedin: 'https://linkedin.com/in/arpitdalal/',
+  x: 'https://x.com/arpitdalal_dev/',
+  bsky: 'https://bsky.app/profile/arpitdalal.dev',
+  youtube: 'https://youtube.com/@arpitdalal_dev/',
+  live: 'https://www.youtube.com/channel/UCKi0CBLeunUbvhdrnrLrr9Q/live',
+  mail: 'mailto:arpitdalalm@gmail.com',
+  xman: 'https://xman.arpitdalal.dev/',
+  'epic-content-stack': 'https://github.com/arpitdalal/epic-content-stack',
 };
 
 type BlogKey = keyof typeof URLS.blog;
 const blogNames = Object.keys(URLS.blog).filter(
-  (key): key is BlogKey => key in URLS.blog
+  (key): key is BlogKey => key in URLS.blog,
 );
 const blogNamesSchema = union(blogNames.map((name) => literal(name)));
 
 function removePathFromUrl(originalPath: string, pathToRemove: string) {
-  const regex = new RegExp("^" + pathToRemove + "/?", "g");
-  return originalPath.replace(regex, "");
+  const regex = new RegExp(`^${pathToRemove}/?`, 'g');
+  return originalPath.replace(regex, '');
 }
 
 function prepareUrlWithPath(
   req: HonoRequest,
   pathToRemove: string,
-  redirectToUrl: string
+  redirectToUrl: string,
 ) {
   return `${redirectToUrl}${removePathFromUrl(req.path, pathToRemove)}`;
 }
@@ -128,9 +128,9 @@ function prepareUrlWithPath(
 function prepareUrlWithUtmParams(
   req: HonoRequest,
   url: string,
-  sentry: Sentry
+  sentry: Sentry,
 ) {
-  const referer = req.header("referer");
+  const referer = req.header('referer');
   const requestUrl = new URL(req.url);
   const queryParams = requestUrl.searchParams;
   let refererHostname = null;
@@ -147,13 +147,13 @@ function prepareUrlWithUtmParams(
     }
   }
   const utmSource =
-    queryParams.get("utm_source") ?? refererHostname ?? "arpit.im";
+    queryParams.get('utm_source') ?? refererHostname ?? 'arpit.im';
   const utmMedium =
-    queryParams.get("utm_medium") ?? (referer ? "social" : "redirect");
-  const utmCampaign = queryParams.get("utm_campaign") ?? "url-shortener";
-  queryParams.set("utm_source", utmSource);
-  queryParams.set("utm_medium", utmMedium);
-  queryParams.set("utm_campaign", utmCampaign);
+    queryParams.get('utm_medium') ?? (referer ? 'social' : 'redirect');
+  const utmCampaign = queryParams.get('utm_campaign') ?? 'url-shortener';
+  queryParams.set('utm_source', utmSource);
+  queryParams.set('utm_medium', utmMedium);
+  queryParams.set('utm_campaign', utmCampaign);
   const redirectToUrl = new URL(url);
   redirectToUrl.searchParams.forEach((value, key) => {
     redirectToUrl.searchParams.delete(key);
@@ -180,12 +180,12 @@ function prepareUrlWithUtmParamsAndPath(
   req: HonoRequest,
   pathToRemove: string,
   redirectToUrl: string,
-  sentry: Sentry
+  sentry: Sentry,
 ) {
   return prepareUrlWithUtmParams(
     req,
     prepareUrlWithPath(req, pathToRemove, redirectToUrl),
-    sentry
+    sentry,
   );
 }
 
@@ -194,9 +194,9 @@ function blogHandler(
   redirect: Redirect,
   rawPath: string,
   pathToRemove: string,
-  sentry: Sentry
+  sentry: Sentry,
 ) {
-  const path = rawPath.replace(pathToRemove + "/", "");
+  const path = rawPath.replace(`${pathToRemove}/`, '');
 
   const result = safeParse(blogNamesSchema, path);
 
@@ -206,22 +206,22 @@ function blogHandler(
   }
 
   return redirect(
-    prepareUrlWithUtmParamsAndPath(req, pathToRemove, URLS.blog.home, sentry)
+    prepareUrlWithUtmParamsAndPath(req, pathToRemove, URLS.blog.home, sentry),
   );
 }
 
 function generateRouteMap() {
   const website = {
-    category: "Website",
-    items: [{ path: "/", url: URLS.website, shortforms: ["/ or /*"] }],
+    category: 'Website',
+    items: [{ path: '/', url: URLS.website, shortforms: ['/ or /*'] }],
   };
 
   const blog = {
-    category: "Blog",
+    category: 'Blog',
     items: [
-      { path: "/blog", url: URLS.blog.home, shortforms: ["/b/* or /blog/*"] },
+      { path: '/blog', url: URLS.blog.home, shortforms: ['/b/* or /blog/*'] },
       ...Object.entries(URLS.blog)
-        .filter(([key]) => key !== "home")
+        .filter(([key]) => key !== 'home')
         .map(([key, url]) => ({
           path: `/${key}`,
           url,
@@ -231,39 +231,39 @@ function generateRouteMap() {
   };
 
   const socialAndOther = {
-    category: "Social & Other",
+    category: 'Social & Other',
     items: [
       ...Object.entries(URLS)
-        .filter(([key]) => !["website", "blog"].includes(key))
+        .filter(([key]) => !['website', 'blog'].includes(key))
         .map(([key, url]) => {
           let shortforms: string[] = [];
           switch (key) {
-            case "github":
-              shortforms = ["/gh/* or /github/*"];
+            case 'github':
+              shortforms = ['/gh/* or /github/*'];
               break;
-            case "linkedin":
-              shortforms = ["/in/* or /linkedin/*"];
+            case 'linkedin':
+              shortforms = ['/in/* or /linkedin/*'];
               break;
-            case "x":
-              shortforms = ["/x/* or /twitter/*"];
+            case 'x':
+              shortforms = ['/x/* or /twitter/*'];
               break;
-            case "bsky":
-              shortforms = ["/bsky/* or /🦋/*"];
+            case 'bsky':
+              shortforms = ['/bsky/* or /🦋/*'];
               break;
-            case "youtube":
-              shortforms = ["/yt/* or /youtube/*"];
+            case 'youtube':
+              shortforms = ['/yt/* or /youtube/*'];
               break;
-            case "live":
-              shortforms = ["/live/*"];
+            case 'live':
+              shortforms = ['/live/*'];
               break;
-            case "epic-content-stack":
-              shortforms = ["/ecs/* or /epic-content-stack/*"];
+            case 'epic-content-stack':
+              shortforms = ['/ecs/* or /epic-content-stack/*'];
               break;
-            case "mail":
-              shortforms = ["/email"];
+            case 'mail':
+              shortforms = ['/email'];
               break;
-            case "xman":
-              shortforms = ["/xman/*"];
+            case 'xman':
+              shortforms = ['/xman/*'];
               break;
             default:
               shortforms = [`/${key}/*`];
@@ -284,7 +284,7 @@ function generateRouteMap() {
 function githubHandler(
   req: HonoRequest,
   redirect: Redirect,
-  pathToRemove: string
+  pathToRemove: string,
 ) {
   return redirect(prepareUrlWithPath(req, pathToRemove, URLS.github));
 }
@@ -301,88 +301,88 @@ function youtubeHandler(redirect: Redirect) {
   return redirect(URLS.youtube);
 }
 function epicContentStackHandler(redirect: Redirect) {
-  return redirect(URLS["epic-content-stack"]);
+  return redirect(URLS['epic-content-stack']);
 }
 
-app.get("/b/*", ({ req, redirect, get }) => {
-  return blogHandler(req, redirect, req.path, "/b", get("sentry"));
+app.get('/b/*', ({ req, redirect, get }) => {
+  return blogHandler(req, redirect, req.path, '/b', get('sentry'));
 });
-app.get("/blog/*", ({ req, redirect, get }) => {
-  return blogHandler(req, redirect, req.path, "/blog", get("sentry"));
+app.get('/blog/*', ({ req, redirect, get }) => {
+  return blogHandler(req, redirect, req.path, '/blog', get('sentry'));
 });
 
-app.get("/notion-url", ({ req, redirect, get }) => {
+app.get('/notion-url', ({ req, redirect, get }) => {
   return redirect(
     prepareUrlWithUtmParamsAndPath(
       req,
-      "notion-url",
-      URLS.blog["notion-url"],
-      get("sentry")
-    )
+      'notion-url',
+      URLS.blog['notion-url'],
+      get('sentry'),
+    ),
   );
 });
 
-app.get("/gh/*", ({ req, redirect }) => {
-  return githubHandler(req, redirect, "/gh");
+app.get('/gh/*', ({ req, redirect }) => {
+  return githubHandler(req, redirect, '/gh');
 });
-app.get("/github/*", ({ req, redirect }) => {
-  return githubHandler(req, redirect, "/github");
+app.get('/github/*', ({ req, redirect }) => {
+  return githubHandler(req, redirect, '/github');
 });
 
-app.get("/in/*", ({ redirect }) => {
+app.get('/in/*', ({ redirect }) => {
   return linkedinHandler(redirect);
 });
-app.get("/linkedin/*", ({ redirect }) => {
+app.get('/linkedin/*', ({ redirect }) => {
   return linkedinHandler(redirect);
 });
 
-app.get("/x/*", ({ redirect }) => {
+app.get('/x/*', ({ redirect }) => {
   return xHandler(redirect);
 });
-app.get("/twitter/*", ({ redirect }) => {
+app.get('/twitter/*', ({ redirect }) => {
   return xHandler(redirect);
 });
 
-app.get("/bsky/*", ({ redirect }) => {
+app.get('/bsky/*', ({ redirect }) => {
   return bskyHandler(redirect);
 });
-app.get("/🦋/*", ({ redirect }) => {
+app.get('/🦋/*', ({ redirect }) => {
   return bskyHandler(redirect);
 });
 
-app.get("/yt/*", ({ redirect }) => {
+app.get('/yt/*', ({ redirect }) => {
   return youtubeHandler(redirect);
 });
-app.get("/youtube/*", ({ redirect }) => {
+app.get('/youtube/*', ({ redirect }) => {
   return youtubeHandler(redirect);
 });
 
-app.get("/live/*", ({ redirect }) => {
+app.get('/live/*', ({ redirect }) => {
   return redirect(URLS.live);
 });
 
-app.get("/ecs/*", ({ redirect }) => {
+app.get('/ecs/*', ({ redirect }) => {
   return epicContentStackHandler(redirect);
 });
-app.get("/epic-content-stack/*", ({ redirect }) => {
+app.get('/epic-content-stack/*', ({ redirect }) => {
   return epicContentStackHandler(redirect);
 });
 
-app.get("/email", ({ redirect }) => {
+app.get('/email', ({ redirect }) => {
   return redirect(URLS.mail);
 });
 
-app.get("/xman/*", ({ req, redirect, get }) => {
+app.get('/xman/*', ({ req, redirect, get }) => {
   return redirect(
-    prepareUrlWithUtmParamsAndPath(req, "/xman", URLS.xman, get("sentry"))
+    prepareUrlWithUtmParamsAndPath(req, '/xman', URLS.xman, get('sentry')),
   );
 });
 
-app.get("/healthcheck", (c) => {
-  return c.text("OK");
+app.get('/healthcheck', (c) => {
+  return c.text('OK');
 });
 
-app.get("/links", (c) => {
+app.get('/links', (c) => {
   const routeMap = generateRouteMap();
 
   const html = `
@@ -463,17 +463,17 @@ app.get("/links", (c) => {
               .map(
                 (item) => `
               <li>
-                <span class="shortform">${item.shortforms.join(", ")}</span>
+                <span class="shortform">${item.shortforms.join(', ')}</span>
                 <a href="${item.url}" target="_blank">${item.url}</a>
               </li>
-            `
+            `,
               )
-              .join("")}
+              .join('')}
           </ul>
         </section>
-      `
+      `,
         )
-        .join("")}
+        .join('')}
     </body>
     </html>
   `;
@@ -481,9 +481,9 @@ app.get("/links", (c) => {
   return c.html(html);
 });
 
-app.get("/*", ({ req, redirect, get }) => {
+app.get('/*', ({ req, redirect, get }) => {
   return redirect(
-    prepareUrlWithUtmParamsAndPath(req, "", URLS.website, get("sentry"))
+    prepareUrlWithUtmParamsAndPath(req, '', URLS.website, get('sentry')),
   );
 });
 
