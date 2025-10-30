@@ -7,7 +7,10 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format --check ."
   },
   "author": {
     "name": "Arpit Dalal",
@@ -24,6 +27,7 @@
   },
   "devDependencies": {
     "@total-typescript/ts-reset": "^0.6.1",
+    "@biomejs/biome": "^1.9.3",
     "vitest": "^4.0.5",
     "wrangler": "^4.45.2"
   },
