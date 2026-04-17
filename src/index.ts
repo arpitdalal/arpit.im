@@ -109,6 +109,15 @@ const URLS = {
   mail: 'mailto:arpitdalalm@gmail.com',
   xman: 'https://xman.arpitdalal.dev/',
   'epic-content-stack': 'https://github.com/arpitdalal/epic-content-stack',
+  talks: {
+    list: 'https://arpitdalal.dev/talks',
+    slugs: {
+      steering: {
+        'slides': "https://canva.link/emp6t9i029eb2ch",
+        'repo': 'https://arpit.im/gh/ledge'
+      },
+    } as Record<string, Record<string, string>>,
+  },
 };
 
 type BlogKey = keyof typeof URLS.blog;
@@ -194,6 +203,38 @@ function prepareUrlWithUtmParamsAndPath(
   );
 }
 
+function talkHashUrl(slug: string) {
+  return `${URLS.talks.list}#${slug}`;
+}
+
+function talksHandler(
+  req: HonoRequest,
+  redirect: Redirect,
+  rawPath: string,
+  pathToRemove: string,
+  sentry: Sentry,
+) {
+  const remainder = removePathFromUrl(rawPath, pathToRemove).replace(/^\//, '');
+  const segments = remainder.split('/').filter(Boolean);
+  const slug = segments[0] ?? '';
+  const nestedKey = segments.slice(1).join('/');
+
+  if (!slug) {
+    return redirect(
+      prepareUrlWithUtmParams(req, URLS.talks.list, sentry),
+    );
+  }
+
+  const nestedMap = URLS.talks.slugs[slug];
+  const explicitUrl =
+    nestedKey && nestedMap && nestedKey in nestedMap
+      ? nestedMap[nestedKey]
+      : null;
+
+  const targetUrl = explicitUrl ?? talkHashUrl(slug);
+  return redirect(prepareUrlWithUtmParams(req, targetUrl, sentry));
+}
+
 function blogHandler(
   req: HonoRequest,
   redirect: Redirect,
@@ -235,11 +276,33 @@ function generateRouteMap() {
     ],
   };
 
+  const talks = {
+    category: 'Talks',
+    items: [
+      { path: '/talks', url: URLS.talks.list, shortforms: ['/talks'] },
+      ...Object.entries(URLS.talks.slugs).flatMap(([slug, nested]) => {
+        const homeUrl = talkHashUrl(slug);
+        return [
+          {
+            path: `/talks/${slug}`,
+            url: homeUrl,
+            shortforms: [`/talks/${slug}`],
+          },
+          ...Object.entries(nested).map(([key, url]) => ({
+            path: `/talks/${slug}/${key}`,
+            url,
+            shortforms: [`/talks/${slug}/${key}`],
+          })),
+        ];
+      }),
+    ],
+  };
+
   const socialAndOther = {
     category: 'Social & Other',
     items: [
       ...Object.entries(URLS)
-        .filter(([key]) => !['website', 'blog'].includes(key))
+        .filter(([key]) => !['website', 'blog', 'talks'].includes(key))
         .map(([key, url]) => {
           let shortforms: string[] = [];
           switch (key) {
@@ -283,7 +346,7 @@ function generateRouteMap() {
     ],
   };
 
-  return [website, blog, socialAndOther];
+  return [website, blog, talks, socialAndOther];
 }
 
 function githubHandler(
@@ -381,6 +444,15 @@ app.get('/xman/*', ({ req, redirect, get }) => {
   return redirect(
     prepareUrlWithUtmParamsAndPath(req, '/xman', URLS.xman, get('sentry')),
   );
+});
+
+app.get('/talks', ({ req, redirect, get }) => {
+  return redirect(
+    prepareUrlWithUtmParams(req, URLS.talks.list, get('sentry')),
+  );
+});
+app.get('/talks/*', ({ req, redirect, get }) => {
+  return talksHandler(req, redirect, req.path, '/talks', get('sentry'));
 });
 
 app.get('/healthcheck', (c) => {
